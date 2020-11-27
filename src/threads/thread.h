@@ -125,6 +125,13 @@ struct thread
 	} process_w;						    /* Process wrapper of this thread */
 #endif
 
+#ifdef VM
+
+	/* Supplementary Page Table */
+	struct supp_pt *spt;
+
+#endif
+
   	int nice;
   	int recent_cpu;
 

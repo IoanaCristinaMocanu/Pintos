@@ -18,6 +18,7 @@
 #include <round.h>
 #include <stdio.h>
 #include <string.h>
+#include "vm/page.h"
 
 //#define DEBUG
 
@@ -365,11 +366,18 @@ bool load (const char *file_name, char *args, void (**eip) (void), void **esp)
 	bool success = false;
 	int i;
 
+	/* Create new Supplementary Page Table */
+  	t->spt = create_supp_pt();
+
 	/* Allocate and activate page directory. */
 	t->pagedir = pagedir_create ();
 	if (t->pagedir == NULL)
 		goto done;
 	process_activate ();
+
+  	/* Acquire the file system lock as we will perform operations on the file
+       system */
+  	lock_acquire(&file_sys_lock);
 
 	/* Open executable file. */
 	file = filesys_open (file_name);
@@ -463,6 +471,10 @@ bool load (const char *file_name, char *args, void (**eip) (void), void **esp)
 done:
 	/* We arrive here whether the load is successful or not. */
 	file_close (file);
+
+	/* Release the file_sys_lock before returning */
+	lock_release (&file_sys_lock);
+
 	return success;
 }
 
