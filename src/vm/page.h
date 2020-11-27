@@ -22,9 +22,9 @@ struct supp_pt_entry {
 
 };
 
-/* Create a new Supplementary Page Table */
+/* Create a new Supplemental Page Table */
 struct supp_pt* create_supp_pt(void);
-/* Destroy Supplementary Page Table */
+/* Destroy Supplemental Page Table */
 void destroy_supp_pt(struct supp_pt *spt);
 
 #endif //_PAGE_H_

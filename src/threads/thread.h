@@ -127,7 +127,7 @@ struct thread
 
 #ifdef VM
 
-	/* Supplementary Page Table */
+	/* Supplemental Page Table */
 	struct supp_pt *spt;
 
 #endif

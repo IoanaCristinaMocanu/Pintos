@@ -7,7 +7,7 @@ static bool supp_less_func (const struct hash_elem *a,
 							void *aux);
 static void supp_destroy_func (struct hash_elem *e, void *aux);
 
-/* Create a new Supplementary Page Table */
+/* Create a new Supplemental Page Table */
 struct supp_pt* create_supp_pt(void) {
   struct supp_pt* spt = calloc (1, sizeof(struct supp_pt));
 
@@ -18,19 +18,19 @@ struct supp_pt* create_supp_pt(void) {
   return spt;
 }
 
-/* Destroy Supplementary Page Table */
+/* Destroy Supplemental Page Table */
 void destroy_supp_pt(struct supp_pt *spt) {
   hash_destroy(spt, supp_destroy_func);
   free(spt);
 }
 
-/* Hashing function for Supplementary Page Table */
+/* Hashing function for Supplemental Page Table */
 static unsigned supp_hash_func (const struct hash_elem *e, void *aux)
 {
   return hash_int( hash_entry(e, struct supp_pt_entry, elem)->upage );
 }
 
-/* Supplementary Page Table comparator */
+/* Supplemental Page Table comparator */
 static bool supp_less_func (const struct hash_elem *a,
 							const struct hash_elem *b,
 							void *aux)
