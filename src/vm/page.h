@@ -3,6 +3,14 @@
 
 #include <hash.h>
 
+/* enum for the Page State */
+enum page_status {
+  ZERO,
+  SWAPPED,
+  FILE_SYS,
+  IN_FRAME
+};
+
 struct supp_pt {
   struct hash hash_table;
 };
@@ -19,6 +27,8 @@ struct supp_pt_entry {
   struct hash_elem elem;
 
   bool dirty_bit;
+
+  enum page_status page_status;
 
 };
 
