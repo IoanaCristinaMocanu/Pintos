@@ -1,5 +1,5 @@
 #include "page.h"
-#include "userprog/syscall.h"
+#include "../userprog/syscall.h"
 
 static unsigned supp_hash_func (const struct hash_elem *e, void *aux);
 static bool supp_less_func (const struct hash_elem *a,
@@ -44,4 +44,23 @@ static void supp_destroy_func (struct hash_elem *e, void *aux)
 {
   struct supp_pt_entry *entry = hash_entry(e, struct supp_pt_entry, elem);
   free (entry);
+}
+
+static bool install_frame(struct supp_pt *supp, void *upage, void *kpage)
+{
+  struct supp_pt_entry *entry;
+  entry = calloc(1, sizeof(struct supp_pt_entry));
+
+  entry->dirty_bit = false;
+  entry->upage = upage;
+  entry->kpage = kpage;
+
+  struct hash_elem *prev_elem = hash_insert(&supp->hash_table, &entry->elem);
+  if(prev_elem == NULL){      // check if the insert is successful
+    return true;
+  }
+  else{
+    free(entry);
+    return false;
+  }
 }
