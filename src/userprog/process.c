@@ -366,8 +366,10 @@ bool load (const char *file_name, char *args, void (**eip) (void), void **esp)
 	bool success = false;
 	int i;
 
+#ifdef VM
 	/* Create new Supplemental Page Table */
   	t->spt = create_supp_pt();
+#endif
 
 	/* Allocate and activate page directory. */
 	t->pagedir = pagedir_create ();

@@ -147,10 +147,10 @@ page_fault (struct intr_frame *f)
   write = (f->error_code & PF_W) != 0;
   user = (f->error_code & PF_U) != 0;
 
+#ifdef VM
   if(user && not_present)
   {
-
-
+    // TODO some checks maybe ?
 
     if(!has_page(thread_current()->spt, fault_addr))
       install_page_zero(thread_current()->spt, fault_addr);
@@ -158,6 +158,7 @@ page_fault (struct intr_frame *f)
     if(load_page(thread_current()->spt, fault_addr))
       return;
   }
+#endif
 
   thread_current ()->process_w.exit_status = EXIT_FAIL;
   close_all_files();

@@ -88,10 +88,16 @@ bool has_page (struct supp_pt *supp, void *upage)
   return find_page(supp, upage) != NULL;
 }
 
+bool load_page (struct supp_pt *supp, void *upage)
+{
+  // TODO
+  return true;
+}
+
 /* Hashing function for Supplemental Page Table */
 static unsigned supp_hash_func (const struct hash_elem *e, void *aux UNUSED)
 {
-  return hash_int (hash_entry(e, struct supp_pt_entry, list_elem)->upage);
+  return hash_int ((int) hash_entry(e, struct supp_pt_entry, list_elem)->upage);
 }
 
 /* Supplemental Page Table comparator */
