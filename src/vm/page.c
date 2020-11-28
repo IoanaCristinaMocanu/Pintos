@@ -29,7 +29,7 @@ void destroy_supp_pt (struct supp_pt *spt)
 }
 
 /* Install the frame corresponding */
-bool install_frame (struct supp_pt *supp, void *upage, void *kpage)
+struct supp_pt_entry * install_frame (struct supp_pt *supp, void *upage, void *kpage)
 {
   struct supp_pt_entry *entry = calloc (1, sizeof (struct supp_pt_entry));
 
@@ -41,18 +41,18 @@ bool install_frame (struct supp_pt *supp, void *upage, void *kpage)
   entry->kpage = kpage;
 
   struct hash_elem *prev_elem = hash_insert (&supp->hash_table, &entry->list_elem);
-  if (prev_elem == NULL)
-  {      // check if the insert is successful
-    return true;
-  } else
+
+  /* Check if insert was successful */
+  if (prev_elem != NULL)
   {
-    free (entry);
-    return false;
+	  free (entry);
+	  return NULL;
   }
+  return entry;
 }
 
 /* Install a page of type ZERO */
-bool install_page_zero (struct supp_pt *supp, void *upage)
+struct supp_pt_entry *install_page_zero (struct supp_pt *supp, void *upage)
 {
   struct supp_pt_entry *entry = calloc (1, sizeof (struct supp_pt_entry));
 
@@ -65,10 +65,14 @@ bool install_page_zero (struct supp_pt *supp, void *upage)
   entry->page_status = ZERO;
 
   struct hash_elem *prev_elem = hash_insert (&supp->hash_table, &entry->list_elem);
-  if (prev_elem == NULL)    // check if the insert is successful
-    return true;
-  else
-    return false;
+
+  /* Check if insert was successful */
+  if (prev_elem != NULL)
+	{
+	  free (entry);
+	  return NULL;
+	}
+  return entry;
 }
 
 /* Get the requested user page from the hash table */

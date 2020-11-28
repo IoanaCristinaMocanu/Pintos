@@ -559,6 +559,9 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
 		size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
 		size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
+		/* If VM is not defined, load the page here.
+		 * Otherwise, load pages lazily */
+//#ifndef VM
 		/* Check if virtual page already allocated */
 		struct thread *t = thread_current ();
 		uint8_t *kpage = pagedir_get_page (t->pagedir, upage);
@@ -588,6 +591,28 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
 			return false;
 		}
 		memset (kpage + page_read_bytes, 0, page_zero_bytes);
+//#endif
+//
+//#ifdef VM
+//		struct supp_pt_entry *page;
+//		/* Check if there are any bytes read from file */
+//		if (page_zero_bytes == PGSIZE)
+//		{
+//		  	/* Install ZERO page */
+//		    page = install_page_zero(thread_current()->spt, upage);
+//		}
+//		else
+//		{
+//		  	/* Install FILE page */
+//		  	// page = install_file_page(...);
+//		}
+//
+//		/* Check if installation was successful */
+//		if (!page)
+//		  return false;
+//
+//		ofs += PGSIZE;
+//#endif
 
 		/* Advance. */
 		read_bytes -= page_read_bytes;

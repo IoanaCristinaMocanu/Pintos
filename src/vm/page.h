@@ -38,9 +38,10 @@ struct supp_pt* create_supp_pt(void);
 void destroy_supp_pt(struct supp_pt *spt);
 
 /* Install the frame corresponding */
-bool install_frame (struct supp_pt *supp, void *upage, void *kpage);
+struct supp_pt_entry * install_frame (struct supp_pt *supp, void *upage,
+	void *kpage);
 /* Install a page of type ZERO */
-bool install_page_zero (struct supp_pt *supp, void *upage);
+struct supp_pt_entry *install_page_zero (struct supp_pt *supp, void *upage);
 
 /* Get the requested user page from the hash table */
 struct supp_pt_entry *find_page (struct supp_pt *supp, void *upage);

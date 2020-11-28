@@ -6,6 +6,7 @@
 #include "../threads/interrupt.h"
 #include "../threads/thread.h"
 #include "../vm/page.h"
+#include "../threads/vaddr.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -148,15 +149,30 @@ page_fault (struct intr_frame *f)
   user = (f->error_code & PF_U) != 0;
 
 #ifdef VM
-  if(user && not_present)
+  /* If the page lies within kernel virtual memory, or if the access is an
+   * attempt to write to a read-only page, then the access is invalid. */
+  if(!is_user_vaddr(fault_addr) && not_present)
   {
-    // TODO some checks maybe ?
+    /* Locate the page that faulted in the supplemental page table. If the
+     * memory reference is valid, use the supplemental page table entry to load
+     * the faulted page */
+    if(has_page(thread_current()->spt, fault_addr))
+    {
+        /* Lazy loading implementation */
+    	if(load_page(thread_current()->spt, fault_addr))
+    	  return;
 
-    if(!has_page(thread_current()->spt, fault_addr))
+     	/* If loaded failed, continue ... */
+
+    }
+    else if (IS_STACK_ACCESS (fault_addr))
+    {
+      /* If the access is valid, but there is no page currently in the
+       * Supplemental Page Table, allow stack growth and install an all-zero
+       * page. */
       install_page_zero(thread_current()->spt, fault_addr);
 
-    if(load_page(thread_current()->spt, fault_addr))
-      return;
+    }
   }
 #endif
 
