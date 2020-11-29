@@ -37,6 +37,9 @@ struct supp_pt_entry {
   uint32_t zero_bytes;
   uint32_t read_bytes;
   bool writable;
+
+  /* for swapped */
+  // a swap index that should be found in swap.h
 };
 
 /* Create a new Supplemental Page Table */

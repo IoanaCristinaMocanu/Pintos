@@ -95,12 +95,6 @@ bool has_page (struct supp_pt *supp, void *upage)
   return find_page (supp, upage) != NULL;
 }
 
-bool load_page (struct supp_pt *supp, void *upage)
-{
-  // TODO
-  return true;
-}
-
 struct supp_pt_entry *
 install_page_file (struct supp_pt *supp, void *upage, void *kpage,
                    struct file *file, off_t
@@ -132,6 +126,37 @@ install_page_file (struct supp_pt *supp, void *upage, void *kpage,
     return NULL;
   }
   return entry;
+}
+
+bool load_page (struct supp_pt *supp, void *upage)
+{
+  struct supp_pt_entry *entry = find_page(supp, upage);
+
+  if(entry == NULL)
+    return false;
+
+  /* void *frame = allocate frame
+  if(frame == NULL)
+    return false;
+  */
+
+  /*
+  bool writable;
+  switch(entry->page_status)
+  {
+    case ZERO:
+      break;
+    case SWAPPED:
+      break;
+    case FILE_SYS:
+      break;
+    case IN_FRAME:
+      return true;
+    default:
+  }
+  */
+
+  return true;
 }
 
 /* Hashing function for Supplemental Page Table */
