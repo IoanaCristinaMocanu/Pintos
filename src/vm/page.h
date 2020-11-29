@@ -2,6 +2,7 @@
 #define _PAGE_H_
 
 #include <hash.h>
+#include "../filesys/off_t.h"
 
 /* enum for the Page State */
 enum page_status {
@@ -30,6 +31,12 @@ struct supp_pt_entry {
 
   enum page_status page_status;
 
+  /* for install file */
+  struct file *file;
+  off_t offset;
+  uint32_t zero_bytes;
+  uint32_t read_bytes;
+  bool writable;
 };
 
 /* Create a new Supplemental Page Table */
@@ -51,5 +58,9 @@ bool has_page (struct supp_pt *supp, void *upage);
 
 /* lazy loading */
 bool load_page (struct supp_pt *supp, void *upage);
+
+struct supp_pt_entry *install_page_file (struct supp_pt *supp, void *upage, void *kpage,
+        struct file *file, off_t offset, uint32_t read_bytes,
+                uint32_t zero_bytes, bool writable);
 
 #endif //_PAGE_H_

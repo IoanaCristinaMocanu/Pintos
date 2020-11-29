@@ -29,24 +29,26 @@ void destroy_supp_pt (struct supp_pt *spt)
 }
 
 /* Install the frame corresponding */
-struct supp_pt_entry * install_frame (struct supp_pt *supp, void *upage, void *kpage)
+struct supp_pt_entry *
+install_frame (struct supp_pt *supp, void *upage, void *kpage)
 {
   struct supp_pt_entry *entry = calloc (1, sizeof (struct supp_pt_entry));
 
-  if(!entry)
-    exit_fail();
+  if (!entry)
+    exit_fail ();
 
   entry->dirty_bit = false;
   entry->upage = upage;
   entry->kpage = kpage;
 
-  struct hash_elem *prev_elem = hash_insert (&supp->hash_table, &entry->list_elem);
+  struct hash_elem *prev_elem = hash_insert (&supp->hash_table,
+                                             &entry->list_elem);
 
   /* Check if insert was successful */
   if (prev_elem != NULL)
   {
-	  free (entry);
-	  return NULL;
+    free (entry);
+    return NULL;
   }
   return entry;
 }
@@ -56,32 +58,33 @@ struct supp_pt_entry *install_page_zero (struct supp_pt *supp, void *upage)
 {
   struct supp_pt_entry *entry = calloc (1, sizeof (struct supp_pt_entry));
 
-  if(!entry)
-    exit_fail();
+  if (!entry)
+    exit_fail ();
 
   entry->dirty_bit = false;
   entry->upage = upage;
   entry->kpage - NULL;
   entry->page_status = ZERO;
 
-  struct hash_elem *prev_elem = hash_insert (&supp->hash_table, &entry->list_elem);
+  struct hash_elem *prev_elem = hash_insert (&supp->hash_table,
+                                             &entry->list_elem);
 
   /* Check if insert was successful */
   if (prev_elem != NULL)
-	{
-	  free (entry);
-	  return NULL;
-	}
+  {
+    free (entry);
+    return NULL;
+  }
   return entry;
 }
 
 /* Get the requested user page from the hash table */
 struct supp_pt_entry *find_page (struct supp_pt *supp, void *upage)
 {
-  struct supp_pt_entry *entry = calloc (1, sizeof(struct supp_pt_entry));
-  entry->upage = pg_round_down(upage);
-  struct hash_elem *elem = hash_find(&supp->hash_table, &entry->list_elem);
-  if(!elem)
+  struct supp_pt_entry *entry = calloc (1, sizeof (struct supp_pt_entry));
+  entry->upage = pg_round_down (upage);
+  struct hash_elem *elem = hash_find (&supp->hash_table, &entry->list_elem);
+  if (!elem)
     return NULL;
   return hash_entry(elem, struct supp_pt_entry, list_elem);
 }
@@ -89,13 +92,46 @@ struct supp_pt_entry *find_page (struct supp_pt *supp, void *upage)
 /* Check if the requested user page is in the hash table */
 bool has_page (struct supp_pt *supp, void *upage)
 {
-  return find_page(supp, upage) != NULL;
+  return find_page (supp, upage) != NULL;
 }
 
 bool load_page (struct supp_pt *supp, void *upage)
 {
   // TODO
   return true;
+}
+
+struct supp_pt_entry *
+install_page_file (struct supp_pt *supp, void *upage, void *kpage,
+                   struct file *file, off_t
+                   offset, uint32_t read_bytes, uint32_t zero_bytes,
+                   bool writable)
+{
+  struct supp_pt_entry *entry = calloc (1, sizeof (struct supp_pt_entry));
+
+  if (!entry)
+    exit_fail ();
+
+  entry->page_status = FILE_SYS;
+  entry->upage = upage;
+  entry->kpage = kpage;
+  entry->dirty_bit = false;
+  entry->file = file;
+  entry->offset = offset;
+  entry->zero_bytes = zero_bytes;
+  entry->read_bytes = read_bytes;
+  entry->writable = writable;
+
+  struct hash_elem *prev_elem = hash_insert (&supp->hash_table,
+                                             &entry->list_elem);
+
+  /* check if insert was successful */
+  if (prev_elem != NULL)
+  {
+    free (entry);
+    return NULL;
+  }
+  return entry;
 }
 
 /* Hashing function for Supplemental Page Table */
